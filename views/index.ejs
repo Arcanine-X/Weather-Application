@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Weather App</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+    <div class="container">
+        <fieldset>
+            <form action="/" method="post">
+                <input name="city" type="text" class="ghost-input" placeholder="Enter a City" required>
+                <input type="submit" class="ghost-button" value="Get Weather">
+            </form>
+
+            <% if(error !== null){ %>
+                <p>
+                    <%= error %>
+                </p>
+                <% } %>
+        </fieldset>
+
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 880 400">
+
+            <defs>
+                <polygon points="25,0 0,50 50,50" id="triangle-1" />
+
+                <!-- sun icon -->
+                <g fill="#ffbb00" id="sun" transform="translate(80,-25)">
+                    <g fill="#ffbb00" transform="rotate(0, 25, 25)">
+                        <use href="#triangle-1" transform="translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(45, 25, 25) translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(90, 25, 25) translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(135, 25, 25) translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(180, 25, 25) translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(225, 25, 25) translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(275, 25, 25) translate(0, -100)" />
+                        <use href="#triangle-1" transform="rotate(320, 25, 25) translate(0, -100)" />
+                        <circle cx="25" cy="25" r="70" />
+                        <animateTransform attributeName="transform" dur="20s" type="rotate" from="0 25 25" to="360 25 25" repeatCount="indefinite" />
+                    </g>
+                </g>
+
+                <!-- clouds icon -->
+                <g fill="#adadad" transform="translate(-15, -30)" id="clouds">
+                    <circle cx="0" cy="30" r="100">
+                        <animate attributeName="r" values="80; 120; 80" dur="20s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="100" cy="0" r="110">
+                        <animate attributeName="r" values="80; 120; 80" dur="21s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="100" cy="30" r="120">
+                        <animate attributeName="r" values="90; 130; 90" dur="19s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="200" cy="30" r="90">
+                        <animate attributeName="r" values="80; 120; 80" dur="18s" repeatCount="indefinite" />
+                    </circle>
+                </g>
+
+                <!-- rain icon -->
+                <g id="drop" opacity="1">
+                    <path d='   M64 152 
+                        C96 152 116 120 128 80 
+                        C156 -16 152 -16 64 22 
+                        C24 40 0 48 0 88 
+                        C0 128 24 152 64 152 
+                        Z' />
+                </g>
+                <g fill="#3AA2D9" transform="translate(-60, -60)" id="rain">
+                    <use x="0" y="0" href="#drop">
+                        <animate attributeName="opacity" values="0.8; 1; 0" dur="1s" repeatCount="indefinite" />
+                        <animateTransform attributeName="transform" dur="1s" type="translate" from="20, -20" to="-20, 20" repeatCount="indefinite" />
+                    </use>
+                    <use x="120" y="50" href="#drop">
+                        <animate attributeName="opacity" values="0.8; 1; 0" dur="0.8s" repeatCount="indefinite" />
+                        <animateTransform attributeName="transform" dur="0.8s" type="translate" from="20, -20" to="-20, 20" repeatCount="indefinite" />
+                    </use>
+                    <use x="260" y="0" href="#drop">
+                        <animate attributeName="opacity" values="0.8; 1; 0" dur="0.9s" repeatCount="indefinite" />
+                        <animateTransform attributeName="transform" dur="0.9s" type="translate" from="20, -20" to="-20, 20" repeatCount="indefinite" />
+                    </use>
+                </g>
+            </defs>
+
+            <g>
+                <use id="weathericon" x="140" y="140" href="#clouds"></use>
+                <text id="location" x="600" y="70" fill="#212121" text-anchor="middle" font-family="sans-serif" font-size="40">Hamburg</text>
+                <text id="temperature" x="600" y="180" fill="#212121" text-anchor="middle" font-family="sans-serif" font-size="100" font-weight="bold">15°C</text>
+                <text id="weathertext" x="600" y="230" fill="#212121" text-anchor="middle" font-family="sans-serif" font-size="40">Rainy</text>
+                <animate attributeName="opacity" values="0; 1" dur="0.4s" repeatCount="1" />
+            </g>
+        </svg>
+
+
+
+
+
+        <script>
+            var weatherDescription = null;
+            var weatherType = null;
+            var chosenCity = null;
+            var cityTemperature = null;
+            var weatherIcon = null;
+
+
+            weatherType = "<%= typeW %>";
+            if (weatherType == "Clouds") {
+                weatherIcon = "clouds";
+            }
+            if (weatherType == "Clear") {
+                weatherIcon = "sun";
+            }
+            if (weatherType == "Rain") {
+                weatherIcon = "rain";
+            }
+            document.getElementById("weathericon").setAttribute("href", "#" + weatherIcon);
+            weatherDescription = "<%= description %>";
+            document.getElementById("weathertext").textContent = weatherDescription
+            chosenCity = "<%= city %>";
+            document.getElementById("location").textContent = chosenCity;
+            cityTemperature = "<%= temp %>";
+            if (cityTemperature.replace(/^\s+|\s+$/gm, '').length == 0) {
+                document.getElementById("temperature").textContent = "";
+            } else {
+                cityTemperature = Math.round(cityTemperature) + "°C";
+                document.getElementById("temperature").textContent = cityTemperature;
+            }
+
+
+            if (weatherType == null || chosenCity == null || cityTemperature == null || weatherDescription == null) {
+                document.getElementById("temperature").textContent = "";
+                document.getElementById("weathericon").setAttribute("href", "#");
+                document.getElementById("weathertext").textContent = "";
+                document.getElementById("location").textContent = "";
+            }
+        </script>
+    </div>
+</body>
+
+</html>
